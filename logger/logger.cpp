@@ -4,3 +4,10 @@
 */
 
 #include "logger.hpp"
+
+namespace log {
+
+    bool isDebug = true;
+
+
+}
