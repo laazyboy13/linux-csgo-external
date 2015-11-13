@@ -1,5 +1,6 @@
 CMakeFiles/*
 .idea/*
+builds/*
 cmake_install.cmake
 *.txt
 !CMakeLists.txt
