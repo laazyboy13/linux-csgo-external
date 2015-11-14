@@ -19,6 +19,7 @@ namespace log {
     const std::string logStart    = "=====[ Log Start: " + dateTimeTag + " ]=====";
     const std::string breaker     = "============================================";
     const std::string logEnd      = "======[ Log End: " + dateTimeTag + " ]======";
+    const std::string debugTitle  = "===========[ Debug Logs Enabled ]===========";
     const std::string statsTitle  = "===============[ Statistics ]===============";
 
     const unsigned int breakerSize = breaker.size();
@@ -36,19 +37,19 @@ namespace log {
 
     Logger::Logger(std::string str) {
         logCounts.insert({INFO, 0});
-        logCounts.insert({DEBUG, 0});
+        if(isDebug) logCounts.insert({DEBUG, 0});
         logCounts.insert({WARNING, 0});
         logCounts.insert({ERROR, 0});
         logCounts.insert({FATAL, 0});
 
-        setFileName(str);
+        setFile(str);
     }
 
     Logger::~Logger() {
         if (file.is_open()) {
             file << statsTitle << std::endl;
             file << "INFO:    " << logCounts[INFO] << std::endl;
-            file << "DEBUG:   " << logCounts[DEBUG] << std::endl;
+            if(isDebug) file << "DEBUG:   " << logCounts[DEBUG] << std::endl;
             file << "WARNING: " << logCounts[WARNING] << std::endl;
             file << "ERROR:   " << logCounts[ERROR] << std::endl;
             file << "FATAL:   " << logCounts[FATAL] << std::endl;
@@ -57,7 +58,7 @@ namespace log {
         }
     }
 
-    void Logger::setFileName(std::string str) {
+    void Logger::setFile(std::string str) {
         if (strncmp(str.c_str(), logDir, strlen(logDir)) != 0) {
             str = std::string(logDir) + str;
         }
@@ -83,6 +84,7 @@ namespace log {
         file.open(str, std::ios::trunc);
         if (file.is_open()) {
             file << insertTimeStamp(logStart) << std::endl;
+            if(isDebug) file << debugTitle << std::endl;
         }
     }
 

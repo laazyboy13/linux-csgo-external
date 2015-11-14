@@ -46,7 +46,7 @@ namespace log {
         ~Logger();
 
         std::string insertTimeStamp(std::string str);
-        void setFileName(std::string str);
+        void setFile(std::string str);
 
         friend Logger& operator <<(Logger& logger, const LogLevel level) {
             switch (level) {
@@ -54,6 +54,7 @@ namespace log {
                     logger.logCounts[INFO]++;
                     return logger << "INFO";
                 case DEBUG:
+                    if(!isDebug) return logger;
                     logger.logCounts[DEBUG]++;
                     return logger << "DEBUG";
                 case WARNING:
