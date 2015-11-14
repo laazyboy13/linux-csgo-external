@@ -3,8 +3,8 @@
    Credits: s0beit - original linux external glow esp
 */
 
-#ifndef __TIME_H__
-#define __TIME_H__
+#ifndef __TIME_UTILS_H__
+#define __TIME_UTILS_H__
 
 #include <chrono>
 #include <iomanip>
@@ -14,4 +14,4 @@ namespace timeutils {
     extern std::string currentTime();
 }
 
-#endif //__TIME_H__
+#endif //__TIME_UTILS_H__

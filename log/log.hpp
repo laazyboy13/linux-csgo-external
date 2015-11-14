@@ -10,12 +10,18 @@
 #include <iostream>
 #include <fstream>
 #include <map>
-#include "../utils/time.hpp"
+#include "../utils/timeutils.hpp"
 #include <unistd.h>
 
 namespace log {
     extern bool isDebug;
+
     extern const char* const logDir;
+    extern const std::string defaultFile;
+
+    extern const std::string dateTimeTag;
+    extern const std::string logStart;
+    extern const std::string logEnd;
 
     enum LogLevel {
         INFO,
@@ -33,7 +39,14 @@ namespace log {
         std::ofstream file;
 
     public:
-        explicit Logger(std::string fileName);
+        Logger(const Logger&) = delete;
+        Logger& operator= (const Logger&) = delete;
+
+        explicit Logger(std::string str = defaultFile);
+        ~Logger();
+
+        std::string insertTimeStamp(std::string str);
+        void setFileName(std::string str);
 
         friend Logger& operator <<(Logger& logger, const log::LogLevel level) {
             switch (level) {
@@ -52,12 +65,12 @@ namespace log {
         }
 
         friend Logger& operator <<(Logger& logger, const char* const text) {
-            logger << text;
+            logger.file << text << std::endl;
             return logger;
         }
 
         friend Logger& operator <<(Logger& logger, const std::string& text) {
-            logger << text;
+            logger.file << text << std::endl;
             return logger;
         }
     };
