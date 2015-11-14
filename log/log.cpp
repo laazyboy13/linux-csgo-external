@@ -17,7 +17,11 @@ namespace log {
 
     const std::string dateTimeTag = "{datetime}";
     const std::string logStart    = "===============[ Log Start: " + dateTimeTag + " ]===============";
-    const std::string logEnd      = "===============[  Log End:  " + dateTimeTag + " ]===============";
+    const std::string breaker     = "================================================================";
+    const std::string logEnd      = "================[ Log End: " + dateTimeTag + " ]================";
+    const std::string statsTitle  = "=========================[ Statistics ]=========================";
+
+    const unsigned int breakerSize = breaker.size();
 
     void init() {
         DIR* pDir;
@@ -42,7 +46,13 @@ namespace log {
 
     Logger::~Logger() {
         if (file.is_open()) {
-            file << insertTimeStamp(logEnd) << std::endl;
+            file << statsTitle << std::endl;
+            file << "INFO:    " << logCounts[INFO] << std::endl;
+            file << "DEBUG:   " << logCounts[DEBUG] << std::endl;
+            file << "WARNING: " << logCounts[WARNING] << std::endl;
+            file << "ERROR:   " << logCounts[ERROR] << std::endl;
+            file << "FATAL:   " << logCounts[FATAL] << std::endl;
+            file << insertTimeStamp(logEnd);
             file.close();
         }
     }
@@ -73,10 +83,8 @@ namespace log {
         file.open(str, std::ios::trunc);
         if (file.is_open()) {
             file << insertTimeStamp(logStart) << std::endl;
-            file.flush();
         }
     }
-
 
     std::string Logger::insertTimeStamp(std::string str) {
         return std::string(str).replace(logStart.find(dateTimeTag), dateTimeTag.size(), timeutils::currentTime());

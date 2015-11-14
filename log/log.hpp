@@ -40,7 +40,7 @@ namespace log {
 
     public:
         Logger(const Logger&) = delete;
-        Logger& operator= (const Logger&) = delete;
+        Logger& operator =(const Logger&) = delete;
 
         explicit Logger(std::string str = defaultFile);
         ~Logger();
@@ -48,23 +48,28 @@ namespace log {
         std::string insertTimeStamp(std::string str);
         void setFileName(std::string str);
 
-        friend Logger& operator <<(Logger& logger, const log::LogLevel level) {
+        friend Logger& operator <<(Logger& logger, const LogLevel level) {
             switch (level) {
-                case log::LogLevel::INFO:
+                case INFO:
+                    logger.logCounts[INFO]++;
                     return logger << "INFO";
-                case log::LogLevel::DEBUG:
+                case DEBUG:
+                    logger.logCounts[DEBUG]++;
                     return logger << "DEBUG";
-                case log::LogLevel::WARNING:
+                case WARNING:
+                    logger.logCounts[WARNING]++;
                     return logger << "WARNING";
-                case log::LogLevel::ERROR:
+                case ERROR:
+                    logger.logCounts[ERROR]++;
                     return logger << "ERROR";
-                case log::LogLevel::FATAL:
+                case FATAL:
+                    logger.logCounts[FATAL]++;
                     return logger << "FATAL";
             }
             return logger;
         }
 
-        friend Logger& operator <<(Logger& logger, const char* const text) {
+        friend Logger& operator <<(Logger& logger, const char* text) {
             logger.file << text << std::endl;
             return logger;
         }

@@ -12,7 +12,11 @@ int main() {
 
     Logger logger("test.log");
 
-    logger << "Test Log";
+    logger << "Test Log 1";
+    logger << "Test Log 2";
+    logger << "Test Log 3";
+    logger << "Test Log 4";
+    logger << "Finished";
 
     if (getuid() != 0) {
         //not root
