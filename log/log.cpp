@@ -16,10 +16,10 @@ namespace log {
     const std::string defaultFile = std::string(logDir) + "test.log";
 
     const std::string dateTimeTag = "{datetime}";
-    const std::string logStart    = "===============[ Log Start: " + dateTimeTag + " ]===============";
-    const std::string breaker     = "================================================================";
-    const std::string logEnd      = "================[ Log End: " + dateTimeTag + " ]================";
-    const std::string statsTitle  = "=========================[ Statistics ]=========================";
+    const std::string logStart    = "=====[ Log Start: " + dateTimeTag + " ]=====";
+    const std::string breaker     = "============================================";
+    const std::string logEnd      = "======[ Log End: " + dateTimeTag + " ]======";
+    const std::string statsTitle  = "===============[ Statistics ]===============";
 
     const unsigned int breakerSize = breaker.size();
 
@@ -87,6 +87,6 @@ namespace log {
     }
 
     std::string Logger::insertTimeStamp(std::string str) {
-        return std::string(str).replace(logStart.find(dateTimeTag), dateTimeTag.size(), timeutils::currentTime());
+        return std::string(str).replace(str.find(dateTimeTag), dateTimeTag.size(), timeutils::currentTime());
     }
 }
