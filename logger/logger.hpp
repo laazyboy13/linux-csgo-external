@@ -4,7 +4,8 @@
 */
 
 
-#pragma once
+#ifndef __LOGGER_H__
+#define __LOGGER_H__
 
 #include <iostream>
 #include <fstream>
@@ -13,8 +14,8 @@
 #include <unistd.h>
 
 namespace log {
-
     extern bool isDebug;
+    extern const char* const logDir;
 
     enum LogLevel {
         INFO,
@@ -24,44 +25,44 @@ namespace log {
         FATAL
     };
 
+    extern void init();
+
+    extern void stripCarriage(std::string& str);
+
     class Logger {
     private:
         std::map<LogLevel, int> logCounts;
         std::ofstream file;
 
     public:
-        explicit Logger(const char* c, const char* fileName = "hack.log") {
+        explicit Logger(std::string fileName);
 
-            if(access(fileName, 0) == 0) {
-                //file exists
-
-            }
-
-            file.open(fileName);
-            if(file.is_open()) {
-                file << "";
-            }
-        }
-
-        friend Logger& operator<< (Logger& logger, const log::LogLevel level) {
+        friend Logger& operator <<(Logger& logger, const log::LogLevel level) {
             switch (level) {
-                case log::LogLevel::INFO: return logger << "INFO";
-                case log::LogLevel::DEBUG: return logger << "DEBUG";
-                case log::LogLevel::WARNING: return logger << "WARNING";
-                case log::LogLevel::ERROR: return logger << "ERROR";
-                case log::LogLevel::FATAL: return logger << "FATAL";
+                case log::LogLevel::INFO:
+                    return logger << "INFO";
+                case log::LogLevel::DEBUG:
+                    return logger << "DEBUG";
+                case log::LogLevel::WARNING:
+                    return logger << "WARNING";
+                case log::LogLevel::ERROR:
+                    return logger << "ERROR";
+                case log::LogLevel::FATAL:
+                    return logger << "FATAL";
             }
             return logger;
         }
 
-        friend Logger& operator<< (Logger& logger, const char* const text) {
+        friend Logger& operator <<(Logger& logger, const char* const text) {
             logger << text;
             return logger;
         }
 
-        friend Logger& operator<< (Logger& logger, const std::string& text) {
+        friend Logger& operator <<(Logger& logger, const std::string& text) {
             logger << text;
             return logger;
         }
     };
 }
+
+#endif //__LOGGER_H__

@@ -3,23 +3,15 @@
    Credits: s0beit - original linux external glow esp
 */
 
-#pragma once
+#ifndef __TIME_H__
+#define __TIME_H__
 
 #include <chrono>
 #include <iomanip>
 #include <sstream>
 
-namespace utils {
-
-
-    namespace time {
-        std::string currentTime(){
-            auto now = std::chrono::system_clock::now();
-            auto in_time_t = std::chrono::system_clock::to_time_t(now);
-
-            std::stringstream ss;
-            ss << std::put_time(std::localtime(&in_time_t), "%F %T");
-            return ss.str();
-        }
-    }
+namespace timeutils {
+    extern std::string currentTime();
 }
+
+#endif //__TIME_H__

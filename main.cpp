@@ -8,6 +8,8 @@ using namespace log;
 
 int main() {
 
+    log::init();
+
     if (getuid() != 0) {
         //not root
         std::cout << "Please start with root." << std::endl;

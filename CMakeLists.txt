@@ -7,6 +7,6 @@ set(EXECUTABLE_OUTPUT_PATH ./build)
 set(SOURCE_FILES
         main.cpp
         logger/logger.cpp logger/logger.hpp
-        utils/time.hpp)
+        utils/time.hpp utils/time.cpp)
 
-add_executable(csgo_external ${SOURCE_FILES})
+add_executable(csgo_external_recode ${SOURCE_FILES})
