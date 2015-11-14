@@ -26,12 +26,6 @@ namespace log {
         closedir(pDir);
     }
 
-    void stripCarriage(std::string& str) {
-        if(*str.rbegin() == '\r') {
-            str.erase(str.length() - 1);
-        }
-    }
-
     Logger::Logger(std::string fileName = std::string(*logDir + "hack.log")) {
 
         logCounts.insert({INFO, 0});
@@ -41,10 +35,7 @@ namespace log {
         logCounts.insert({FATAL, 0});
 
         if (access(fileName.c_str(), F_OK) == 0) {
-            std::string line;
-            std::ifstream read(fileName);
             std::string newFileName = std::string(fileName);
-
             int i = 0;
             do {
                 unsigned int index = newFileName.find_last_of(".");
@@ -52,21 +43,9 @@ namespace log {
                 newFileName = newFileName.substr(0, index);
                 newFileName += "_" + i + extension;
             } while(access(newFileName.c_str(), F_OK) == 0);
-
-            std::ofstream move(newFileName, std::ios::app);
-            if(!read.eof()) {
-                getline(read, line);
-                stripCarriage(line);
-                move << std::endl << std::endl << "==========[ " + line + " ]==========" << std::endl;
-            }
-            while(!read.eof()) {
-                while(getline(read, line)) {
-                    stripCarriage(line);
-                    move << line << std::endl;
-                }
-            }
-            read.close();
-            move.close();
+            std::ifstream src(fileName, std::ios::binary);
+            std::ofstream dest(newFileName, std::ios::binary);
+            dest << src.rdbuf();
         }
 
         file.open(fileName, std::ios::trunc);

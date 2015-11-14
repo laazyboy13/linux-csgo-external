@@ -27,8 +27,6 @@ namespace log {
 
     extern void init();
 
-    extern void stripCarriage(std::string& str);
-
     class Logger {
     private:
         std::map<LogLevel, int> logCounts;
