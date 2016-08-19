@@ -101,12 +101,12 @@ void hack::Glow(remote::Handle* csgo, remote::MapModuleMemoryRegion* client) {
             if (csgo->Read(g_glow[i].m_pEntity, &ent, sizeof(Entity)))
             {
                 
-                // if (ent.m_iTeamNum != 2 && ent.m_iTeamNum != 3)
-                // {
-                //     g_glow[i].m_bRenderWhenOccluded = 0;
-                //     g_glow[i].m_bRenderWhenUnoccluded = 0;
-                //     continue;
-                // }
+                if (ent.m_iTeamNum != 2 && ent.m_iTeamNum != 3)
+                {
+                    g_glow[i].m_bRenderWhenOccluded = 0;
+                    g_glow[i].m_bRenderWhenUnoccluded = 0;
+                    continue;
+                }
                         
                 unsigned int iAlt1Status = 0 ;
                 csgo->Read((void*) (csgo->m_addressOfAlt1), &iAlt1Status, sizeof(int)); 
@@ -141,14 +141,14 @@ void hack::Glow(remote::Handle* csgo, remote::MapModuleMemoryRegion* client) {
                 g_glow[i].m_bRenderWhenOccluded = 1;
                 g_glow[i].m_bRenderWhenUnoccluded = 0;
                 
-                if (ent.m_bDormant)
-                {
-                    g_glow[i].m_flGlowRed = 0.8f;
-                    g_glow[i].m_flGlowGreen = 0.5f;
-                    g_glow[i].m_flGlowBlue = 0.8f;
-                    g_glow[i].m_flGlowAlpha = 1.0f;
-                }
-                else
+                // if (ent.m_bDormant)
+                // {
+                //     g_glow[i].m_flGlowRed = 0.8f;
+                //     g_glow[i].m_flGlowGreen = 0.5f;
+                //     g_glow[i].m_flGlowBlue = 0.8f;
+                //     g_glow[i].m_flGlowAlpha = 1.0f;
+                // }
+                // else
                 if (ent.m_iTeamNum == 2 || ent.m_iTeamNum == 3) {
                     g_glow[i].m_flGlowRed = (teamNumber != ent.m_iTeamNum ? 1.0f : 0.0f);
                     g_glow[i].m_flGlowGreen = 0.0f;
