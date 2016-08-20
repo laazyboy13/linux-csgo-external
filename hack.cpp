@@ -89,9 +89,6 @@ void hack::Glow(remote::Handle* csgo, remote::MapModuleMemoryRegion* client) {
         NoFlash(csgo, client, localPlayer);	
     }
     
-    
-    
-    
     for (unsigned int i = 0; i < count; i++)
     {
         if (g_glow[i].m_pEntity != NULL)
@@ -120,8 +117,9 @@ void hack::Glow(remote::Handle* csgo, remote::MapModuleMemoryRegion* client) {
                         unsigned int attack = 0x5;
                         unsigned int release = 0x4;
                         csgo->Read((void*) (localPlayer+0xB380), &crossHairId, sizeof(int));
-                        csgo->Read((void*) (ent.m_iEntityId), &entityId, sizeof(int));
-                        if(crossHairId != entityId)
+                        csgo->Read((void*) (g_glow[i].m_pEntity + 0x94), &entityId, sizeof(int));
+                        
+                        if(crossHairId == entityId)
                         {
                             usleep(100);
                             csgo->Write((void*) (csgo->m_addressOfForceAttack), &attack, sizeof(int));
