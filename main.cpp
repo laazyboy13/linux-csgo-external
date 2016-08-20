@@ -45,24 +45,12 @@ int main() {
     
     Display* display = XOpenDisplay(0);
 	Window root = DefaultRootWindow(display);
-	
+
     int keycodeGlow = XKeysymToKeycode(display, XK_F7);
     int keycodeFlash = XKeysymToKeycode(display, XK_F8);
     int keycodeBHopEnable = XKeysymToKeycode(display, XK_F9);
     int keycodeBHop = XKeysymToKeycode(display, XK_space);
-    
-    unsigned int modifiers = 0;
-    XGrabKey(display, keycodeGlow, modifiers, root, false,
-				GrabModeAsync, GrabModeAsync);
-    XGrabKey(display, keycodeFlash, modifiers, root, false,
-				GrabModeAsync, GrabModeAsync);
-    XGrabKey(display, keycodeBHop, modifiers, root, false, GrabModeAsync, GrabModeAsync);
-    XGrabKey(display, keycodeBHopEnable, modifiers, root, false, GrabModeAsync, GrabModeAsync);
-    
-    
-    XSelectInput(display, root, KeyPressMask);
-    
-    
+
     remote::Handle csgo;
 
     while (true) {
@@ -160,59 +148,46 @@ int main() {
     
     XEvent ev;
     
+    char keys[32];
+    char lastkeys[32];
+
     while (csgo.IsRunning()) {
-	    while (XPending(display) > 0) {
-			XNextEvent(display, &ev);
-                if (ev.type == KeyPress){
-					if (ev.xkey.keycode == keycodeGlow)
-					{
-						csgo.m_bShouldGlow = !csgo.m_bShouldGlow;
-						cout << "Glow [" << Endi(csgo.m_bShouldGlow) << "]" << endl;
-						break;
-					}
-					if (ev.xkey.keycode == keycodeFlash)
-					{
-                        csgo.m_bShouldNoFlash = !csgo.m_bShouldNoFlash;
-						cout << "NoFlash [" << Endi(csgo.m_bShouldNoFlash) << "]" << endl;
-						break;
-					}
-                    if (ev.xkey.keycode == keycodeBHopEnable)
-					{
-						csgo.m_bBhopEnabled = !csgo.m_bBhopEnabled;
-                        
-                        if (!csgo.m_bBhopEnabled)
-                        {
-                            XUngrabKey(display, keycodeBHop, modifiers, root);
+        XQueryKeymap(display, keys);
+
+        for (unsigned i = 0; i < sizeof(keys); ++i) {
+            if (keys[i] != lastkeys[i]) {
+                // check which key got changed
+                for (unsigned j = 0, test = 1; j < 8; ++j, test *= 2) {
+                    // if the key was pressed, and it wasn't before, print this
+                    if ((keys[i] & test) &&
+                            ((keys[i] & test) != (lastkeys[i] & test))) {
+                        const int code = i * 8 + j;
+
+                        if (code == keycodeGlow) {
+                            csgo.m_bShouldGlow = !csgo.m_bShouldGlow;
+                            cout << "Glow [" << Endi(csgo.m_bShouldGlow) << "]" << endl;
+                        } else if (code == keycodeFlash) {
+                            csgo.m_bShouldNoFlash = !csgo.m_bShouldNoFlash;
+                            cout << "NoFlash [" << Endi(csgo.m_bShouldNoFlash) << "]" << endl;
+                        } else if (code == keycodeBHopEnable) {
+                            csgo.m_bBhopEnabled = !csgo.m_bBhopEnabled;
+                            cout << "BHop [" << Endi(csgo.m_bBhopEnabled) << "]" << endl;
+                        } else if (code == keycodeBHop) {
+                            if (csgo.m_bBhopEnabled) {
+                                csgo.m_bShouldBHop = !csgo.m_bShouldBHop;
+                                cout << "BHop triggered [" << Endi(csgo.m_bShouldBHop) << "]" << endl;
+                            }
                         }
-                        else
-                        {
-                            XGrabKey(display, keycodeBHop, modifiers, root, false, GrabModeAsync, GrabModeAsync);
-                        }
-                        
-                        cout << "BHop [" << Endi(csgo.m_bBhopEnabled) << "]" << endl;
-						break;
-					}
-                    if (ev.xkey.keycode == keycodeBHop)
-					{
-						csgo.m_bShouldBHop = !csgo.m_bShouldBHop;
-                        cout << "BHop triggered [" << Endi(csgo.m_bShouldBHop) << "]" << endl;
-						break;
-					}
+                    }
                 }
-                else
-                {
-                    break;
-                }
-                
-			XSelectInput(display, root, KeyPressMask);
-		}
+            }
+
+            lastkeys[i] = keys[i];
+        }
+
         hack::Glow(&csgo, &client);
         hack::Bhop(&csgo, &client, display);
-	}
-	
-    XUngrabKey(display, keycodeGlow, modifiers, root);
-    XUngrabKey(display, keycodeFlash, modifiers, root);
-    XUngrabKey(display, keycodeBHop, modifiers, root);
-    XUngrabKey(display, keycodeBHopEnable, modifiers, root);
+    }
+
     return 0;
 }
