@@ -36,9 +36,7 @@ bind yourkey +alt1
 - Debian (Jessie)
 
 ## Known Bugs
-* Toggles do not work with Numlock enabled.
 * Trigger doesn't work at far distance
-* Bhop hack locks the spacebar key in and outside of the game until F9 is pressed.
 
 ## Credits:
 - Original author: s0beit
