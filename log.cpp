@@ -1,8 +1,8 @@
-#include "log.hpp"
+#include "log.h"
 
 std::string g_cwd;
 
-void log::init() {
+void Log::init() {
     char cwd[PATH_MAX];
 
     if(getcwd(cwd, PATH_MAX) == NULL) {
@@ -15,7 +15,7 @@ void log::init() {
     std::cout << "Log Path [" << g_cwd << "]" << std::endl;
 }
 
-void log::put(std::string str) {
+void Log::put(std::string str) {
     std::ofstream file(g_cwd + "hack.log", std::ios::out | std::ios::app);
 
     str.append("\r\n");

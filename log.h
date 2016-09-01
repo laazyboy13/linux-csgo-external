@@ -7,7 +7,7 @@
 #include <linux/limits.h>
 #include <unistd.h>
 
-namespace log
+namespace Log
 {
     extern void init();
     extern void put(std::string str);

@@ -1,5 +1,4 @@
-#include "remote.hpp"
-#include "log.hpp"
+#include "remote.h"
 
 #define FINDPATTERN_CHUNKSIZE 0x1000
 
@@ -226,6 +225,26 @@ namespace remote {
         return std::string();
     }
 };
+
+unsigned long remote::getModule(const char * moduleName, pid_t pid){
+    
+    char cmd[256];
+    FILE *maps;
+    unsigned long result = 0;
+    
+    
+    snprintf(cmd, 256, "grep \"%s\" /proc/%i/maps | head -n 1 | cut -d \"-\" -f1", moduleName, pid);
+    maps = popen(cmd, "r");
+    
+    if(maps)
+    {
+        if(fscanf(maps, "%" SCNx64, &result));
+    }
+    
+    pclose(maps);
+    
+    return result;
+}
 
 // Functions Exported
 bool remote::FindProcessByName(std::string name, remote::Handle* out) {

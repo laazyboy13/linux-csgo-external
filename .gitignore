@@ -5,6 +5,6 @@ cmake_install.cmake
 !CMakeLists.txt
 !nologs-branch.md
 *.log
-Makefile
 lolpls
 csgo_external
+.vscode/

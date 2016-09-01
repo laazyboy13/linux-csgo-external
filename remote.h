@@ -15,6 +15,9 @@
 #include <vector>
 #include <sstream>
 #include <fstream>
+#include <inttypes.h>
+
+#define FL_ONGROUND (1<<0)
 
 namespace remote {
     class Handle;
@@ -49,10 +52,16 @@ namespace remote {
 	unsigned long m_addressOfGlowPointer;
 	unsigned long m_addressOfLocalPlayer;
 	unsigned long m_addressOfForceAttack;
+    unsigned long m_oAddressOfForceJump;
 	unsigned long m_addressOfAlt1;
-
+    unsigned long m_addressOfOnGround;
+    
+    unsigned long a_engine_client;
+    
 	bool m_bShouldGlow;
 	bool m_bShouldNoFlash;
+    bool m_bShouldBHop;
+    bool m_bBhopEnabled;
 
         Handle() : pid(-1) {}
         Handle(pid_t target);
@@ -85,6 +94,7 @@ namespace remote {
     public:
         std::vector<MapModuleMemoryRegion> regions;
     };
-
+    
+    unsigned long getModule(const char * modname, pid_t pid);
     bool FindProcessByName(std::string name, Handle* out);
 };

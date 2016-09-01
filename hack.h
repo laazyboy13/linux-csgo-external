@@ -1,8 +1,21 @@
 #pragma once
 
+#include <X11/Xlib.h>
+#include <X11/Xutil.h>
+
+#include <X11/keysym.h>
+#include <X11/keysymdef.h>
+
+#include <X11/extensions/XTest.h>
+
+#include <chrono>
+#include <thread>
 #include <stddef.h>
-#include "remote.hpp"
-#include "log.hpp"
+
+#include "remote.h"
+#include "types.h"
+
+using namespace std;
 
 #define TEAM_SPECTATOR          1
 
@@ -74,34 +87,8 @@ namespace hack {
         unsigned int unk5; //0028 (054612E8)
     };
 
-    struct Entity
-    {
-        unsigned char unk0[0x11D];  
-        unsigned char m_isDormant;  
-        unsigned char unk01[0x6];   
-        int           m_iTeamNum;   
-        int           unk1;         
-        int           unk2;         
-        int           m_iHealth;    
-        unsigned char unk3[0x15B];  
-        int           m_lifeState;  
-    };
-
-    struct Color {
-        unsigned char _color[4];
-    };
-
-    struct Vector {
-        float x, y, z;
-    };
-
-    struct QAngle {
-        float x, y, z;
-    };
-
-    struct Vector2D {
-        float x, y;
-    };
-
+    
+    
     extern void Glow(remote::Handle* csgo, remote::MapModuleMemoryRegion* client);
+    extern void Bhop(remote::Handle* csgo, remote::MapModuleMemoryRegion* client, Display* display);
 };

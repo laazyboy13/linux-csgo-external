@@ -3,29 +3,42 @@ linux-csgo-external
 
 Linux cheat for x64 linux systems
 
-Compiled and tested on:
-- Xubuntu
-- Archlinux
-- Debian (Jessie)
+Features:
+* Wallhack
+* Trigger bot
+* Bhop
+* No Flash
 
-![hackin](http://i.imgur.com/fiKLjnQ.jpg)
+## Wall hack
+![Walls png](http://i.imgur.com/ztp5WBf.jpg)
 
-Credits:
-- Original author: s0beit
-- Original author credits: BoToX & buFFy
-- Maintainer/Updater: laazyboy13, owerosu & community
+## Bhop
+![Bhops gif](http://i.imgur.com/0DXp8bA.gif)
 
 ## Toggles
-* F7 : GlowESP
-* F8 : NoFlash
+* F7  : GlowESP
+* F8  : NoFlash
+* F9  : Enable/Disable BHop
+* SPACE : Toggle bhop
 
 ## TriggerKey
 Bind your own key to alt1:
 bind yourkey +alt1
 
-## Notes
-* Requires Xlib (both `libx11-dev:i386` and `libx11-dev`, `# apt-get install libx11-dev libx11-dev:i386` on Debian based systems
+### Compiling
+* Requires Xlib (both `libx11-dev:i386`, `libx11-dev`, `libxtst-dev` , `# apt-get install libx11-dev libx11-dev:i386 libxtst-dev` on Debian based systems
+* `cd` into the repo directory and enter the command `make`
+
+## Tested Distributions
+- Ubuntu
+- Xubuntu
+- Archlinux
+- Debian (Jessie)
 
 ## Known Bugs
-* Toggles do not work with Numlock enabled.
 * Trigger doesn't work at far distance
+
+## Credits:
+- Original author: s0beit
+- Original author credits: BoToX & buFFy
+- Maintainer/Updater: laazyboy13, owerosu, McSwaggens & community
