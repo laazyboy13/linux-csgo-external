@@ -145,12 +145,12 @@ int main() {
    0x7f114cc6f42a:	cmovne ebx,eax
    0x7f114cc6f42d:	mov    eax,r13d
 */
-    unsigned long foundForceAttackMov = (long)client.find(csgo,
+    unsigned long foundForceJumpMov = (long)client.find(csgo,
                                              "\x44\x89\xe8\xc1\xe0\x1d\xc1\xf8\x1f\x83\xe8\x03\x45\x84\xe4\x74\x08\x21\xd0", //01/09/16
                                              "xxxxxxxxxxxxxxxx?xx");
     
   
-    csgo.m_oAddressOfForceJump = csgo.GetCallAddress((void*)(foundForceAttackMov+26));
+    csgo.m_oAddressOfForceJump = csgo.GetCallAddress((void*)(foundForceJumpMov+26));
 
 
     csgo.m_bShouldGlow = true;
