@@ -16,6 +16,7 @@
 #include <chrono>
 #include <thread>
 
+
 #include "remote.h"
 #include "hack.h"
 
@@ -38,7 +39,6 @@ int main() {
             "Maintainers:\n\tlaazyboy13,\n\towerosu,\n\tMcSwaggens\n\tcommunity\n"    <<
             "github: https://github.com/McSwaggens/linux-csgo-external\n"   <<
             "\n---------------[linux-csgo-external]---------------\n"                   << endl;
-
     
     Display* display = XOpenDisplay(0);
 	Window root = DefaultRootWindow(display);
@@ -136,7 +136,22 @@ int main() {
     csgo.m_addressOfAlt1 = csgo.GetCallAddress((void*)(foundAlt1Mov+20));
     cout << "Address of local player " << csgo.m_addressOfLocalPlayer << endl;
     
-    csgo.m_oAddressOfForceJump = client.client_start + 0x62F3500;
+    /*   0x7f114cc6f414:	and    eax,edx
+   0x7f114cc6f416:	mov    DWORD PTR [rip+0x55d10f0],eax        # 0x7f115224050c
+   0x7f114cc6f41c:	mov    edx,DWORD PTR [rip+0x55d10de]        # 0x7f1152240500
+=> 0x7f114cc6f422:	mov    eax,ebx
+   0x7f114cc6f424:	or     eax,0x2
+   0x7f114cc6f427:	test   dl,0x3
+   0x7f114cc6f42a:	cmovne ebx,eax
+   0x7f114cc6f42d:	mov    eax,r13d
+*/
+    unsigned long foundForceJumpMov = (long)client.find(csgo,
+                                             "\x44\x89\xe8\xc1\xe0\x1d\xc1\xf8\x1f\x83\xe8\x03\x45\x84\xe4\x74\x08\x21\xd0", //01/09/16
+                                             "xxxxxxxxxxxxxxxx?xx");
+    
+  
+    csgo.m_oAddressOfForceJump = csgo.GetCallAddress((void*)(foundForceJumpMov+26));
+
 
     csgo.m_bShouldGlow = true;
     csgo.m_bShouldNoFlash = true;
