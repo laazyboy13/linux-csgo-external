@@ -12,6 +12,7 @@
 #define WARNING_TITLE BOLD << CYAN << "[" << YELLOW << "LOG" << CYAN << "] " << RESET
 #define ERROR_TITLE BOLD << CYAN << "[" << RED << "LOG" << CYAN << "] " << RESET
 #define ADDRESS_TITLE BOLD << CYAN << "[" << MAGENTA << "ADDRESS" << CYAN << "] " << RESET
+#define TOGGLE_TITLE BOLD << CYAN << "[" << BLUE << "TOGGLE" << CYAN << "] " << RESET
 
 #define LOGGER_CLEAR_ON_START true
 
@@ -20,7 +21,9 @@ namespace Logger
     extern void init ();
     extern void Log (std::string str);
     extern void normal (std::string str);
+    extern void toggle (std::string feature, bool enabled);
     extern void address (std::string str, unsigned long address);
     extern void warning (std::string str);
     extern void error (std::string str);
+    extern std::string Endi (bool endi);
 };

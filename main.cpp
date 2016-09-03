@@ -23,12 +23,6 @@
 
 using namespace std;
 
-std::string
-Endi(bool bl)
-{
-    return bl ? "Enabled" : "Disabled";
-}
-
 int main()
 {
     Logger::init ();
@@ -190,17 +184,17 @@ int main()
 
                         if (code == keycodeGlow) {
                             csgo.m_bShouldGlow = !csgo.m_bShouldGlow;
-                            cout << "Glow [" << Endi(csgo.m_bShouldGlow) << "]" << endl;
+                            Logger::toggle ("ESP\t\t", csgo.m_bShouldGlow);
                         } else if (code == keycodeFlash) {
                             csgo.m_bShouldNoFlash = !csgo.m_bShouldNoFlash;
-                            cout << "NoFlash [" << Endi(csgo.m_bShouldNoFlash) << "]" << endl;
+                            Logger::toggle ("No Flash\t", csgo.m_bShouldNoFlash);
                         } else if (code == keycodeBHopEnable) {
                             csgo.m_bBhopEnabled = !csgo.m_bBhopEnabled;
-                            cout << "BHop [" << Endi(csgo.m_bBhopEnabled) << "]" << endl;
+                            Logger::toggle ("Bhop Lock\t", !csgo.m_bBhopEnabled);
                         } else if (code == keycodeBHop) {
                             if (csgo.m_bBhopEnabled) {
                                 csgo.m_bShouldBHop = !csgo.m_bShouldBHop;
-                                cout << "BHop triggered [" << Endi(csgo.m_bShouldBHop) << "]" << endl;
+                                Logger::toggle ("Bhop\t\t", csgo.m_bShouldBHop);
                             }
                         }
                     }
