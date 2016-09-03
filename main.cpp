@@ -24,6 +24,7 @@
 using namespace std;
 
 #define SHOW_CSGO_LINUX_TITLE true
+#define CSGO_LINUX_TITLE_LOCATION "csgo-external-title"
 
 int main()
 {
@@ -36,7 +37,7 @@ int main()
     }
     
 #if SHOW_CSGO_LINUX_TITLE
-    system ("cat csgo");
+    system ("cat " CSGO_LINUX_TITLE_LOCATION);
 #endif
 
     cout << UNDERLINE "\n                                                   " RESET << endl;
