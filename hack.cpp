@@ -34,8 +34,6 @@ void hack::Bhop(remote::Handle* csgo, remote::MapModuleMemoryRegion* client, Dis
     unsigned int onGround = 0;
     csgo->Read((void*) (localPlayer+0x134+0x4), &onGround, sizeof(int));
     
-    //std::cout << "Onground: " << (onGround & (1 << 0)) << std::endl;
-    
     onGround = onGround & (1 << 0);
     
     if (onGround == 1 && csgo->m_bShouldBHop && csgo->m_bBhopEnabled)
@@ -45,10 +43,6 @@ void hack::Bhop(remote::Handle* csgo, remote::MapModuleMemoryRegion* client, Dis
         this_thread::sleep_for(chrono::milliseconds(2));
         jump = 4;
         csgo->Write((void*) (csgo->m_oAddressOfForceJump), &jump, sizeof(int));
-        
-        //XTestFakeKeyEvent(display, keycodeJump, True, 0);
-        //this_thread::sleep_for(chrono::milliseconds(1));
-        //XTestFakeKeyEvent(display, keycodeJump, False, 0);
     }
 }
 
@@ -63,8 +57,9 @@ void hack::Glow(remote::Handle* csgo, remote::MapModuleMemoryRegion* client) {
 
     hack::CGlowObjectManager manager;
 
-    if (!csgo->Read((void*) csgo->m_addressOfGlowPointer, &manager, sizeof(hack::CGlowObjectManager))) {
-        // std::cout << "Failed to read glowClassAddress" << std::endl;
+    if (!csgo->Read((void*) csgo->m_addressOfGlowPointer, &manager, sizeof(hack::CGlowObjectManager)))
+	{
+		Logger::error ("Failed to read glowClassAddress");
         return;
     }
 
@@ -72,8 +67,9 @@ void hack::Glow(remote::Handle* csgo, remote::MapModuleMemoryRegion* client) {
 
     void* data_ptr = (void*) manager.m_GlowObjectDefinitions.DataPtr;
 
-    if (!csgo->Read(data_ptr, g_glow, sizeof(hack::GlowObjectDefinition_t) * count)) {
-        // std::cout << "Failed to read m_GlowObjectDefinitions" << std::endl;
+    if (!csgo->Read(data_ptr, g_glow, sizeof(hack::GlowObjectDefinition_t) * count))
+	{
+		Logger::error ("Failed to read m_GlowObjectDefinitions");
         return;
     }
 
@@ -131,7 +127,8 @@ void hack::Glow(remote::Handle* csgo, remote::MapModuleMemoryRegion* client) {
 
                 csgo->Write((void*) ((unsigned long) g_glow[i].m_pEntity + 0xEC5), &spotted, sizeof(unsigned char));                
 
-                if(g_glow[i].m_bRenderWhenOccluded == 1) {
+                if(g_glow[i].m_bRenderWhenOccluded == 1)
+				{
                     continue;
                 }
 
@@ -139,15 +136,8 @@ void hack::Glow(remote::Handle* csgo, remote::MapModuleMemoryRegion* client) {
                 g_glow[i].m_bRenderWhenOccluded = 1;
                 g_glow[i].m_bRenderWhenUnoccluded = 0;
                 
-                // if (ent.m_bDormant)
-                // {
-                //     g_glow[i].m_flGlowRed = 0.8f;
-                //     g_glow[i].m_flGlowGreen = 0.5f;
-                //     g_glow[i].m_flGlowBlue = 0.8f;
-                //     g_glow[i].m_flGlowAlpha = 1.0f;
-                // }
-                // else
-                if (ent.m_iTeamNum == 2 || ent.m_iTeamNum == 3) {
+				if (ent.m_iTeamNum == 2 || ent.m_iTeamNum == 3)
+				{
                     g_glow[i].m_flGlowRed = (teamNumber != ent.m_iTeamNum ? 1.0f : 0.0f);
                     g_glow[i].m_flGlowGreen = 0.0f;
                     g_glow[i].m_flGlowBlue = (teamNumber == ent.m_iTeamNum ? 1.0f : 0.0f);

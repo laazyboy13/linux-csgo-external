@@ -5,11 +5,13 @@ struct Vector
 	float z;
 };
 
-struct Color {
+struct Color
+{
 	unsigned char _color[4];
 };
 
-struct Vector2D {
+struct Vector2D
+{
 	float x, y;
 };
 
@@ -20,7 +22,8 @@ struct QAngle
 	float z; // Roll
 };
 
-struct Entity {
+struct Entity
+{
 	char __buf_0x00[0x88]; // 0x0
 	int m_bIsAutoaimTarget; // 0x88
 	unsigned int m_iEntityId; // 0x8C

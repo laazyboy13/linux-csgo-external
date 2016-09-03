@@ -14,6 +14,7 @@
 
 #include "remote.h"
 #include "types.h"
+#include "logger.h"
 
 using namespace std;
 

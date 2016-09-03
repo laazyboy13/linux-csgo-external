@@ -23,6 +23,8 @@
 
 using namespace std;
 
+#define SHOW_CSGO_LINUX_TITLE true
+
 int main()
 {
     Logger::init ();
@@ -33,8 +35,10 @@ int main()
         return 0;
     }
     
+#if SHOW_CSGO_LINUX_TITLE
     system ("cat csgo");
-    
+#endif
+
     cout << UNDERLINE "\n                                                   " RESET << endl;
     cout << UNDERLINE "---------------[linux-csgo-external]---------------\n" RESET << endl;
     cout << BOLD RED << "█ AUTHOR: " UNDERLINE WHITE "\ts0beit" RESET << endl;
@@ -80,7 +84,7 @@ int main()
     {
         if (!csgo.IsRunning())
         {
-            cout << "Exited game before client could be located, terminating" << endl;
+			Logger::error ("The game was closed before I could find the client library inside of csgo");
             return 0;
         }
 
@@ -104,7 +108,7 @@ int main()
     
     if (pEngine == 0)
     {
-        cout << "Could not find engine module..." << endl;
+		Logger::error ("Couldn't find engine module inside of csgo");
         return 0;
     }
     
