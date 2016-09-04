@@ -208,9 +208,17 @@ int main()
 
             lastkeys[i] = keys[i];
         }
-
-        hack::Glow(&csgo, &client);
-        hack::Bhop(&csgo, &client, display);
+        
+        try
+        {
+            hack::Glow(&csgo, &client);
+            hack::Bhop(&csgo, &client, display);
+        }
+        catch (int exception)
+        {
+            Logger::error ("An error occurred, closing...");
+            break;
+        }
     }
 
     return 0;

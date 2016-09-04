@@ -60,6 +60,7 @@ void hack::Glow(remote::Handle* csgo, remote::MapModuleMemoryRegion* client) {
     if (!csgo->Read((void*) csgo->m_addressOfGlowPointer, &manager, sizeof(hack::CGlowObjectManager)))
 	{
 		Logger::error ("Failed to read glowClassAddress");
+        throw 1;
         return;
     }
 
@@ -70,6 +71,7 @@ void hack::Glow(remote::Handle* csgo, remote::MapModuleMemoryRegion* client) {
     if (!csgo->Read(data_ptr, g_glow, sizeof(hack::GlowObjectDefinition_t) * count))
 	{
 		Logger::error ("Failed to read m_GlowObjectDefinitions");
+        throw 1;
         return;
     }
 
