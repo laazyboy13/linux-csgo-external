@@ -27,7 +27,7 @@ using namespace std;
 #define CSGO_LINUX_TITLE_LOCATION "csgo-external-title"
 
 int main() {
-	Logger::init ();
+	Logger::init();
 
 	if (getuid() != 0) {
 		Logger::error (string("Cannot start linux-csgo-external as ") + UNDERLINE + "NON ROOT" RESET RED " user.");
