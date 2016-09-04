@@ -38,7 +38,7 @@ int main() {
 	system ("cat " CSGO_LINUX_TITLE_LOCATION);
 #endif
 
-	cout << UNDERLINE "\n													" RESET << endl;
+	cout << UNDERLINE "\n                                                   " RESET << endl;
 	cout << UNDERLINE "---------------[linux-csgo-external]---------------\n" RESET << endl;
 	cout << BOLD RED << "█ AUTHOR: " UNDERLINE WHITE "\ts0beit" RESET << endl;
 	cout << BOLD YELLOW << "█ MAINTAINER:" UNDERLINE WHITE "\tMcSwaggens" RESET << endl;
@@ -46,7 +46,7 @@ int main() {
 	cout << BOLD CYAN << "█ PROGRAMMER:" UNDERLINE WHITE "\tluk1337" RESET << endl;
 	cout << BOLD BLUE << "█ HELP: " UNDERLINE WHITE "\tCommunity" RESET << endl;
 	cout << BOLD MAGENTA << "█ Github:" UNDERLINE WHITE "\thttps://github.com/McSwaggens/linux-csgo-external" RESET << endl;
-	cout << UNDERLINE "													  " RESET << endl;
+	cout << UNDERLINE "                                                   " RESET << endl;
 	cout << UNDERLINE "---------------[linux-csgo-external]---------------\n" RESET << endl;
 
 	Display* display = XOpenDisplay(0);
