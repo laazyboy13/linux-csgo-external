@@ -33,7 +33,7 @@ bind yourkey +alt1
 - Ubuntu
 - Xubuntu
 - Archlinux
-- Debian (Jessie)
+- Debian (Jessie + Sid)
 
 ## Known Bugs
 * Trigger doesn't work at far distance
