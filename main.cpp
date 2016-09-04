@@ -195,7 +195,8 @@ int main()
                             Logger::toggle ("No Flash\t", csgo.m_bShouldNoFlash);
                         } else if (code == keycodeBHopEnable) {
                             csgo.m_bBhopEnabled = !csgo.m_bBhopEnabled;
-                            Logger::toggle ("Bhop Lock\t", !csgo.m_bBhopEnabled);
+                            csgo.m_bShouldBHop = false;
+							Logger::toggle ("Bhop Lock\t", !csgo.m_bBhopEnabled);
                         } else if (code == keycodeBHop) {
                             if (csgo.m_bBhopEnabled) {
                                 csgo.m_bShouldBHop = !csgo.m_bShouldBHop;
