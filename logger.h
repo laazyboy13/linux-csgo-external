@@ -9,8 +9,8 @@
 #include "colors.h"
 
 #define LOG_TITLE BOLD << CYAN << "[" << WHITE << "LOG" << CYAN << "] " << RESET
-#define WARNING_TITLE BOLD << CYAN << "[" << YELLOW << "LOG" << CYAN << "] " << RESET
-#define ERROR_TITLE BOLD << CYAN << "[" << RED << "LOG" << CYAN << "] " << RESET
+#define WARNING_TITLE BOLD << CYAN << "[" << YELLOW << "WARNING" << CYAN << "] " << RESET
+#define ERROR_TITLE BOLD << CYAN << "[" << RED << "ERROR" << CYAN << "] " << RESET
 #define ADDRESS_TITLE BOLD << CYAN << "[" << MAGENTA << "ADDRESS" << CYAN << "] " << RESET
 #define TOGGLE_TITLE BOLD << CYAN << "[" << BLUE << "TOGGLE" << CYAN << "] " << RESET
 
