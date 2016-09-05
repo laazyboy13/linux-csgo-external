@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __HACK_H_
+#define __HACK_H_
 
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
@@ -92,3 +93,5 @@ namespace hack {
 	extern void Glow(remote::Handle* csgo, remote::MapModuleMemoryRegion* client);
 	extern void Bhop(remote::Handle* csgo, remote::MapModuleMemoryRegion* client, Display* display);
 };
+
+#endif

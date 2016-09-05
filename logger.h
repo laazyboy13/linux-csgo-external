@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __LOGGER_H_
+#define __LOGGER_H_
 
 #include <string>
 #include <iostream>
@@ -26,3 +27,5 @@ namespace Logger {
 	extern void error (std::string str);
 	extern std::string Endi (bool endi);
 };
+
+#endif

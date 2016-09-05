@@ -27,7 +27,7 @@ using namespace std;
 #define CSGO_LINUX_TITLE_LOCATION "csgo-external-title"
 
 int main() {
-	Logger::init ();
+	Logger::init();
 
 	if (getuid() != 0) {
 		Logger::error (string("Cannot start linux-csgo-external as ") + UNDERLINE + "NON ROOT" RESET RED " user.");
@@ -50,7 +50,6 @@ int main() {
 	cout << UNDERLINE "---------------[linux-csgo-external]---------------\n" RESET << endl;
 
 	Display* display = XOpenDisplay(0);
-	Window root = DefaultRootWindow(display);
 
 	int keycodeGlow = XKeysymToKeycode(display, XK_F7);
 	int keycodeFlash = XKeysymToKeycode(display, XK_F8);
@@ -121,7 +120,6 @@ int main() {
 	csgo.m_addressOfGlowPointer = csgo.GetCallAddress((void*)(call+0xF));
 	Logger::address ("Glow array pointer:\t", csgo.m_addressOfGlowPointer);
 
-	long ptrLocalPlayer = (client.client_start + 0x5A9B1A0); // 27/06/16
 	unsigned long foundLocalPlayerLea = (long)client.find(csgo,
 		"\x48\x89\xe5\x74\x0e\x48\x8d\x05\x00\x00\x00\x00", //27/06/16
 		"xxxxxxxx????");
@@ -161,8 +159,6 @@ int main() {
 	csgo.m_bShouldNoFlash = true;
 	csgo.m_bBhopEnabled = true;
 	csgo.m_bShouldBHop = false;
-
-	XEvent ev;
 
 	char keys[32];
 	char lastkeys[32];
