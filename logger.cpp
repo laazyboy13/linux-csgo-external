@@ -56,7 +56,7 @@ void Logger::toggle (std::string feature, bool enabled) {
 	Log (std::string("[TOGGLE] ") + feature + " " + endi);
 	std::cout << TOGGLE_TITLE << BOLD WHITE
 				  << feature << RESET BOLD CYAN "[ " << (enabled ? GREEN : RED)
-				  << endi << RESET BOLD << (enabled ? "	 " : " ") << CYAN << "]"
+				  << endi << RESET BOLD << (enabled ? "  " : " ") << CYAN << "]"
 				  << RESET << std::endl;
 }
 
