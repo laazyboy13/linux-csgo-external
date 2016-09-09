@@ -66,7 +66,7 @@ int main() {
 	}
 
 	stringstream ss;
-	ss << "\t  CSGO Process UID:\t [";
+	ss << "\t  CSGO Process ID:\t [";
 	ss << csgo.GetPid ();
 	ss << "]";
 
