@@ -89,10 +89,9 @@ void hack::Glow(remote::Handle* csgo, remote::MapModuleMemoryRegion* client) {
 					continue;
 				}
 
-				unsigned int iAlt1Status = 0 ;
-				csgo->Read((void*) (csgo->m_addressOfAlt1), &iAlt1Status, sizeof(int));
+				bool entityInCrossHair = false;
 				
-				if (localPlayer != 0 && (iAlt1Status == 0x5)) {
+				if (localPlayer != 0) {
 					if (ent.m_iTeamNum != teamNumber) {
 						unsigned int crossHairId = 0;
 						unsigned int entityId = 0;
@@ -100,12 +99,20 @@ void hack::Glow(remote::Handle* csgo, remote::MapModuleMemoryRegion* client) {
 						unsigned int release = 0x4;
 						csgo->Read((void*) (localPlayer+0xB390), &crossHairId, sizeof(int));
 						csgo->Read((void*) (g_glow[i].m_pEntity + 0x94), &entityId, sizeof(int));
-
-						if (crossHairId == entityId) {
-							usleep(100);
-							csgo->Write((void*) (csgo->m_addressOfForceAttack), &attack, sizeof(int));
-							usleep(100);
-							csgo->Write((void*) (csgo->m_addressOfForceAttack), &release, sizeof(int));
+						
+						unsigned int iAlt1Status = 0 ;
+						csgo->Read((void*) (csgo->m_addressOfAlt1), &iAlt1Status, sizeof(int));
+						
+						if (crossHairId == entityId)
+						{
+							entityInCrossHair = true;
+							if (iAlt1Status == 0x5)
+							{
+								usleep(100);
+								csgo->Write((void*) (csgo->m_addressOfForceAttack), &attack, sizeof(int));
+								usleep(100);
+								csgo->Write((void*) (csgo->m_addressOfForceAttack), &release, sizeof(int));
+							}
 						}
 					}
 				}
@@ -120,9 +127,9 @@ void hack::Glow(remote::Handle* csgo, remote::MapModuleMemoryRegion* client) {
 
 				if (ent.m_iTeamNum == 2 || ent.m_iTeamNum == 3) {
 					g_glow[i].m_flGlowRed = (teamNumber != ent.m_iTeamNum ? 1.0f : 0.0f);
-					g_glow[i].m_flGlowGreen = 0.0f;
+					g_glow[i].m_flGlowGreen = (entityInCrossHair && teamNumber != ent.m_iTeamNum ? 0.45f : 0.0f);
 					g_glow[i].m_flGlowBlue = (teamNumber == ent.m_iTeamNum ? 1.0f : 0.0f);
-					g_glow[i].m_flGlowAlpha = 0.6f;
+					g_glow[i].m_flGlowAlpha = (entityInCrossHair && teamNumber != ent.m_iTeamNum ? 1.0f : 0.6f);
 				}
 			}
 		}
