@@ -106,7 +106,11 @@ void hack::Glow(remote::Handle* csgo, remote::MapModuleMemoryRegion* client) {
 						if (crossHairId == entityId)
 						{
 							entityInCrossHair = true;
-							if (iAlt1Status == 0x5)
+							
+							unsigned int shooting;
+							csgo->Read((void*) (csgo->m_addressOfForceAttack), &shooting, sizeof(int));
+							
+							if (iAlt1Status == 0x5 && shooting != attack)
 							{
 								usleep(100);
 								csgo->Write((void*) (csgo->m_addressOfForceAttack), &attack, sizeof(int));
