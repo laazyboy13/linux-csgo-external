@@ -28,7 +28,7 @@ void hack::Bhop(remote::Handle* csgo, remote::MapModuleMemoryRegion* client, Dis
 
 	unsigned int onGround = 0;
 	csgo->Read((void*) (localPlayer+0x134+0x4), &onGround, sizeof(int));
-
+	
 	onGround = onGround & (1 << 0);
 
 	if (onGround == 1 && csgo->m_bShouldBHop && csgo->m_bBhopEnabled) {
@@ -91,14 +91,14 @@ void hack::Glow(remote::Handle* csgo, remote::MapModuleMemoryRegion* client) {
 
 				unsigned int iAlt1Status = 0 ;
 				csgo->Read((void*) (csgo->m_addressOfAlt1), &iAlt1Status, sizeof(int));
-
+				
 				if (localPlayer != 0 && (iAlt1Status == 0x5)) {
 					if (ent.m_iTeamNum != teamNumber) {
 						unsigned int crossHairId = 0;
 						unsigned int entityId = 0;
 						unsigned int attack = 0x5;
 						unsigned int release = 0x4;
-						csgo->Read((void*) (localPlayer+0xB380), &crossHairId, sizeof(int));
+						csgo->Read((void*) (localPlayer+0xB390), &crossHairId, sizeof(int));
 						csgo->Read((void*) (g_glow[i].m_pEntity + 0x94), &entityId, sizeof(int));
 
 						if (crossHairId == entityId) {
