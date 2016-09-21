@@ -28,7 +28,7 @@ void hack::Bhop(remote::Handle* csgo, remote::MapModuleMemoryRegion* client, Dis
 
 	unsigned int onGround = 0;
 	csgo->Read((void*) (localPlayer+0x134+0x4), &onGround, sizeof(int));
-	
+
 	onGround = onGround & (1 << 0);
 
 	if (onGround == 1 && csgo->m_bShouldBHop && csgo->m_bBhopEnabled) {
@@ -40,7 +40,7 @@ void hack::Bhop(remote::Handle* csgo, remote::MapModuleMemoryRegion* client, Dis
 	}
 }
 
-void hack::Glow(remote::Handle* csgo, remote::MapModuleMemoryRegion* client) {
+void hack::Glow(double colors[12], remote::Handle* csgo, remote::MapModuleMemoryRegion* client) {
 	if (!csgo || !client)
 		return;
 
@@ -90,7 +90,7 @@ void hack::Glow(remote::Handle* csgo, remote::MapModuleMemoryRegion* client) {
 				}
 
 				bool entityInCrossHair = false;
-				
+
 				if (localPlayer != 0) {
 					if (ent.m_iTeamNum != teamNumber) {
 						unsigned int crossHairId = 0;
@@ -99,19 +99,17 @@ void hack::Glow(remote::Handle* csgo, remote::MapModuleMemoryRegion* client) {
 						unsigned int release = 0x4;
 						csgo->Read((void*) (localPlayer+0xB390), &crossHairId, sizeof(int));
 						csgo->Read((void*) (g_glow[i].m_pEntity + 0x94), &entityId, sizeof(int));
-						
+
 						unsigned int iAlt1Status = 0 ;
 						csgo->Read((void*) (csgo->m_addressOfAlt1), &iAlt1Status, sizeof(int));
-						
-						if (crossHairId == entityId)
-						{
+
+						if (crossHairId == entityId) {
 							entityInCrossHair = true;
-							
+
 							unsigned int shooting;
 							csgo->Read((void*) (csgo->m_addressOfForceAttack), &shooting, sizeof(int));
-							
-							if (iAlt1Status == 0x5 && shooting != attack)
-							{
+
+							if (iAlt1Status == 0x5 && shooting != attack) {
 								usleep(100);
 								csgo->Write((void*) (csgo->m_addressOfForceAttack), &attack, sizeof(int));
 								usleep(100);
@@ -130,10 +128,17 @@ void hack::Glow(remote::Handle* csgo, remote::MapModuleMemoryRegion* client) {
 				g_glow[i].m_bRenderWhenUnoccluded = 0;
 
 				if (ent.m_iTeamNum == 2 || ent.m_iTeamNum == 3) {
-					g_glow[i].m_flGlowRed = (teamNumber != ent.m_iTeamNum ? 1.0f : 0.0f);
-					g_glow[i].m_flGlowGreen = (entityInCrossHair && teamNumber != ent.m_iTeamNum ? 0.45f : 0.0f);
-					g_glow[i].m_flGlowBlue = (teamNumber == ent.m_iTeamNum ? 1.0f : 0.0f);
-					g_glow[i].m_flGlowAlpha = (entityInCrossHair && teamNumber != ent.m_iTeamNum ? 1.0f : 0.6f);
+					if (teamNumber == ent.m_iTeamNum) {
+						g_glow[i].m_flGlowRed = colors[8];
+						g_glow[i].m_flGlowGreen = colors[9];
+						g_glow[i].m_flGlowBlue = colors[10];
+						g_glow[i].m_flGlowAlpha = colors[11];
+					} else {
+						g_glow[i].m_flGlowRed = entityInCrossHair ? colors[4] : colors[0];
+						g_glow[i].m_flGlowGreen = entityInCrossHair ? colors[5] : colors[1];
+						g_glow[i].m_flGlowBlue = entityInCrossHair ? colors[6] : colors[2];
+						g_glow[i].m_flGlowAlpha = entityInCrossHair ? colors[7] : colors[3];
+					}
 				}
 			}
 		}
