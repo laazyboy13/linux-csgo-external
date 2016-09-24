@@ -90,7 +90,7 @@ namespace hack {
 
 
 
-	extern void Glow(remote::Handle* csgo, remote::MapModuleMemoryRegion* client);
+	extern void Glow(double colors[12], remote::Handle* csgo, remote::MapModuleMemoryRegion* client);
 	extern void Bhop(remote::Handle* csgo, remote::MapModuleMemoryRegion* client, Display* display);
 };
 

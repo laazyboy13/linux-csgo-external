@@ -29,7 +29,7 @@ Bind your own key to alt1:
 bind yourkey +alt1
 
 ### Compiling & Running the hack
-* The hack requires the Xlib libraries, install them on Debian based system with the command `sudo apt-get install libx11-dev libx11-dev:i386 libxtst-dev`
+* The hack requires the Xlib libraries, install them on Debian based system with the command `sudo apt-get install libx11-dev libx11-dev:i386 libxtst-dev libconfig-dev`
 * Make sure you're inside of the `linux-csgo-external` directory (`cd linux-csgo-external`)
 * Now, compile the hack by entering the command `make`
 * You can now run the hack ***before or after*** *csgo* is launched by running the hack as **root** `sudo ./csgo_external`

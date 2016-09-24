@@ -6,4 +6,4 @@ set(EXECUTABLE_OUTPUT_PATH ./build)
 
 file(GLOB SOURCE_FILES *.cpp)
 add_executable(csgo_external ${SOURCE_FILES})
-target_link_libraries(csgo_external "-lX11")
+target_link_libraries(csgo_external "-lX11 -lconfig++")

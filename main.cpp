@@ -15,22 +15,38 @@
 
 #include <chrono>
 #include <thread>
-
+#include <libconfig.h++>
 
 #include "remote.h"
 #include "hack.h"
 #include "logger.h"
 
 using namespace std;
+using namespace libconfig;
 
 #define SHOW_CSGO_LINUX_TITLE true
 #define CSGO_LINUX_TITLE_LOCATION "csgo-external-title"
+
+Config cfg;
+
+string getConfigValue(string property) {
+	try {
+		string name = cfg.lookup(property);
+		return name;
+	} catch (const SettingNotFoundException &nfex) {
+		stringstream ss;
+		ss << "Cannot find property: '" << property << "' in settings.cfg file";
+		Logger::error(ss.str());
+	}
+
+	return NULL;
+}
 
 int main() {
 	Logger::init();
 
 	if (getuid() != 0) {
-		Logger::error (string("Cannot start linux-csgo-external as ") + UNDERLINE + "NON ROOT" RESET RED " user.");
+		Logger::error(string("Cannot start linux-csgo-external as ") + UNDERLINE + "NON ROOT" RESET RED " user.");
 		return 0;
 	}
 
@@ -51,10 +67,41 @@ int main() {
 
 	Display* display = XOpenDisplay(0);
 
-	int keycodeGlow = XKeysymToKeycode(display, XK_F7);
-	int keycodeFlash = XKeysymToKeycode(display, XK_F8);
-	int keycodeBHopEnable = XKeysymToKeycode(display, XK_F9);
-	int keycodeBHop = XKeysymToKeycode(display, XK_space);
+	try {
+		cfg.readFile("settings.cfg");
+	} catch (const FileIOException &fioex) {
+		Logger::error("I/O error while reading settings.cfg.");
+	} catch (const ParseException &pex) {
+		stringstream ss;
+		ss << "Parse error at " << pex.getFile() << ":" << pex.getLine() << " - " << pex.getError();
+		Logger::error(ss.str());
+	}
+
+	int keycodeGlow =  XKeysymToKeycode(display, XStringToKeysym(getConfigValue("keycodeGlow").c_str()));
+	int keycodeFlash = XKeysymToKeycode(display, XStringToKeysym(getConfigValue("keycodeFlash").c_str()));
+	int keycodeBHopEnable = XKeysymToKeycode(display, XStringToKeysym(getConfigValue("keycodeBHopEnable").c_str()));
+	int keycodeBHop = XKeysymToKeycode(display, XStringToKeysym(getConfigValue("keycodeBHop").c_str()));
+
+	double enemyRed = ::atof(getConfigValue("enemyRed").c_str());
+	double enemyGreen = ::atof(getConfigValue("enemyGreen").c_str());
+	double enemyBlue = ::atof(getConfigValue("enemyBlue").c_str());
+	double enemyAlpha = ::atof(getConfigValue("enemyAlpha").c_str());
+
+	double enemyInCrosshairRed = ::atof(getConfigValue("enemyInCrosshairRed").c_str());
+	double enemyInCrosshairGreen = ::atof(getConfigValue("enemyInCrosshairGreen").c_str());
+	double enemyInCrosshairBlue = ::atof(getConfigValue("enemyInCrosshairBlue").c_str());
+	double enemyInCrosshairAlpha = ::atof(getConfigValue("enemyInCrosshairAlpha").c_str());
+
+	double allyRed = ::atof(getConfigValue("allyRed").c_str());
+	double allyGreen = ::atof(getConfigValue("allyGreen").c_str());
+	double allyBlue = ::atof(getConfigValue("allyBlue").c_str());
+	double allyAlpha = ::atof(getConfigValue("allyAlpha").c_str());
+
+	double colors[12] = {
+		enemyRed, enemyGreen, enemyBlue, enemyAlpha,
+		enemyInCrosshairRed, enemyInCrosshairGreen, enemyInCrosshairBlue, enemyInCrosshairAlpha,
+		allyRed, allyGreen, allyBlue, allyAlpha
+	};
 
 	remote::Handle csgo;
 
@@ -78,7 +125,7 @@ int main() {
 
 	while (client.start == 0) {
 		if (!csgo.IsRunning()) {
-			Logger::error ("The game was closed before I could find the client library inside of csgo");
+			Logger::error("The game was closed before I could find the client library inside of csgo");
 			return 0;
 		}
 
@@ -99,7 +146,7 @@ int main() {
 	unsigned long pEngine = remote::getModule("engine_client.so", csgo.GetPid());
 
 	if (pEngine == 0) {
-		Logger::error ("Couldn't find engine module inside of csgo");
+		Logger::error("Couldn't find engine module inside of csgo");
 		return 0;
 	}
 
@@ -177,18 +224,18 @@ int main() {
 
 						if (code == keycodeGlow) {
 							csgo.m_bShouldGlow = !csgo.m_bShouldGlow;
-							Logger::toggle ("ESP\t\t", csgo.m_bShouldGlow);
+							Logger::toggle("ESP\t\t", csgo.m_bShouldGlow);
 						} else if (code == keycodeFlash) {
 							csgo.m_bShouldNoFlash = !csgo.m_bShouldNoFlash;
-							Logger::toggle ("No Flash\t", csgo.m_bShouldNoFlash);
+							Logger::toggle("No Flash\t", csgo.m_bShouldNoFlash);
 						} else if (code == keycodeBHopEnable) {
 							csgo.m_bBhopEnabled = !csgo.m_bBhopEnabled;
 							csgo.m_bShouldBHop = false;
-							Logger::toggle ("Bhop Lock\t", !csgo.m_bBhopEnabled);
+							Logger::toggle("Bhop Lock\t", !csgo.m_bBhopEnabled);
 						} else if (code == keycodeBHop) {
 							if (csgo.m_bBhopEnabled) {
 								csgo.m_bShouldBHop = !csgo.m_bShouldBHop;
-								Logger::toggle ("Bhop\t\t", csgo.m_bShouldBHop);
+								Logger::toggle("Bhop\t\t", csgo.m_bShouldBHop);
 							}
 						}
 					}
@@ -199,10 +246,10 @@ int main() {
 		}
 
 		try {
-			hack::Glow(&csgo, &client);
+			hack::Glow(colors, &csgo, &client);
 			hack::Bhop(&csgo, &client, display);
 		} catch (int exception) {
-			Logger::error ("An error occurred, closing...");
+			Logger::error("An error occurred, closing...");
 			break;
 		}
 	}
