@@ -1,1 +1,0 @@
-The nologs branch is for PR's pertaining to stripping out logging. Currently the only logging is before actual glow and radar loop. Therefore it's not performance affecting in any way.

@@ -1,101 +1,161 @@
-#include "hack.hpp"
-#include "netvar.hpp"
+#include "hack.h"
 
 struct iovec g_remote[1024], g_local[1024];
 struct hack::GlowObjectDefinition_t g_glow[1024];
 
-int cachedSpottedAddress = -1;
 int count = 0;
+unsigned char spotted = 1;
 
-void Radar(remote::Handle* csgo, remote::MapModuleMemoryRegion* client, void* ent, hack::Entity* entity) {
-    if (cachedSpottedAddress == -1) {
-        cachedSpottedAddress = netvar::GetOffset("CBaseEntity", "m_bSpotted");
-    }
+void NoFlash(remote::Handle* csgo, remote::MapModuleMemoryRegion* client, unsigned long localPlayer) {
+	float fFlashAlpha = 70.0f;
+	float fFlashAlphaFull = 255.0f;
+	float fFlashAlphaFromGame = 0.0f;
 
-    // give up :(
-    if (cachedSpottedAddress == -1)
-        return;
-
-    unsigned char spotted = 1;
-
-    csgo->Write((void*) ((unsigned long) ent + cachedSpottedAddress), &spotted, sizeof(unsigned char));
+	csgo->Read((void*) (localPlayer+0xABE4), &fFlashAlphaFromGame, sizeof(float));
+	if ((fFlashAlphaFromGame > fFlashAlpha) && (csgo->m_bShouldNoFlash))
+		csgo->Write((void*) (localPlayer+0xABE4), &fFlashAlpha, sizeof(float));
+	else if ((fFlashAlphaFromGame < fFlashAlphaFull) && (!csgo->m_bShouldNoFlash))
+		csgo->Write((void*) (localPlayer+0xABE4), &fFlashAlphaFull, sizeof(float));
 }
 
-void hack::Glow(remote::Handle* csgo, remote::MapModuleMemoryRegion* client, unsigned long glowAddress) {
-    if (!csgo || !client)
-        return;
+void hack::Bhop(remote::Handle* csgo, remote::MapModuleMemoryRegion* client, Display* display) {
+	if (!csgo || !client)
+		return;
 
-    // Reset
-    bzero(g_remote, sizeof(g_remote));
-    bzero(g_local, sizeof(g_local));
-    bzero(g_glow, sizeof(g_glow));
+	unsigned long localPlayer = 0;
 
-    hack::CGlowObjectManager manager;
+	csgo->Read((void*) csgo->m_addressOfLocalPlayer, &localPlayer, sizeof(long));
 
-    if (!csgo->Read((void*) glowAddress, &manager, sizeof(hack::CGlowObjectManager))) {
-        // std::cout << "Failed to read glowClassAddress" << std::endl;
-        return;
-    }
+	unsigned int onGround = 0;
+	csgo->Read((void*) (localPlayer+0x134+0x4), &onGround, sizeof(int));
 
-    size_t count = manager.m_GlowObjectDefinitions.Count;
+	onGround = onGround & (1 << 0);
 
-    void* data_ptr = (void*) manager.m_GlowObjectDefinitions.DataPtr;
+	if (onGround == 1 && csgo->m_bShouldBHop && csgo->m_bBhopEnabled) {
+		unsigned int jump = 5;
+		csgo->Write((void*) (csgo->m_oAddressOfForceJump), &jump, sizeof(int));
+		this_thread::sleep_for(chrono::milliseconds(2));
+		jump = 4;
+		csgo->Write((void*) (csgo->m_oAddressOfForceJump), &jump, sizeof(int));
+	}
+}
 
-    if (!csgo->Read(data_ptr, g_glow, sizeof(hack::GlowObjectDefinition_t) * count)) {
-        // std::cout << "Failed to read m_GlowObjectDefinitions" << std::endl;
-        return;
-    }
+void hack::Glow(double colors[12], remote::Handle* csgo, remote::MapModuleMemoryRegion* client) {
+	if (!csgo || !client)
+		return;
 
-    size_t writeCount = 0;
+	// Reset
+	bzero(g_remote, sizeof(g_remote));
+	bzero(g_local, sizeof(g_local));
+	bzero(g_glow, sizeof(g_glow));
 
-    for (unsigned int i = 0; i < count; i++) {
-        if (g_glow[i].m_pEntity != NULL) {
-            hack::Entity ent;
+	hack::CGlowObjectManager manager;
 
-            if (csgo->Read(g_glow[i].m_pEntity, &ent, sizeof(hack::Entity))) {
-                if (ent.m_iTeamNum != 2 && ent.m_iTeamNum != 3 ||
-                    ent.m_isDormant == 1) {
-                    g_glow[i].m_bRenderWhenOccluded = 0;
-                    g_glow[i].m_bRenderWhenUnoccluded = 0;
-                    continue;
-                }
+	if (!csgo->Read((void*) csgo->m_addressOfGlowPointer, &manager, sizeof(hack::CGlowObjectManager))) {
+		Logger::error ("Failed to read glowClassAddress");
+		throw 1;
+		return;
+	}
 
-                // Radar Hack
-                Radar(csgo, client, g_glow[i].m_pEntity, &ent);
+	size_t count = manager.m_GlowObjectDefinitions.Count;
 
-                if(g_glow[i].m_bRenderWhenOccluded == 1) {
-                  continue;
-                }
-                
-                g_glow[i].m_bRenderWhenOccluded = 1;
-                g_glow[i].m_bRenderWhenUnoccluded = 0;
+	void* data_ptr = (void*) manager.m_GlowObjectDefinitions.DataPtr;
 
-                if (ent.m_iTeamNum == 2) {
-                    g_glow[i].m_flGlowRed = 1.0f;
-                    g_glow[i].m_flGlowGreen = 0.0f;
-                    g_glow[i].m_flGlowBlue = 0.0f;
-                    g_glow[i].m_flGlowAlpha = 0.4f;
+	if (!csgo->Read(data_ptr, g_glow, sizeof(hack::GlowObjectDefinition_t) * count)) {
+		Logger::error ("Failed to read m_GlowObjectDefinitions");
+		throw 1;
+		return;
+	}
 
-                } else if (ent.m_iTeamNum == 3) {
-                    g_glow[i].m_flGlowRed = 0.0f;
-                    g_glow[i].m_flGlowGreen = 0.0f;
-                    g_glow[i].m_flGlowBlue = 1.0f;
-                    g_glow[i].m_flGlowAlpha = 0.4f;
-                }
-            }
-        }
+	size_t writeCount = 0;
+	unsigned long localPlayer = 0;
+	unsigned int teamNumber = 0;
 
-        size_t bytesToCutOffEnd = sizeof(hack::GlowObjectDefinition_t) - g_glow[i].writeEnd();
-        size_t bytesToCutOffBegin = (size_t) g_glow[i].writeStart();
-        size_t totalWriteSize = (sizeof(hack::GlowObjectDefinition_t) - (bytesToCutOffBegin + bytesToCutOffEnd));
+	csgo->Read((void*) csgo->m_addressOfLocalPlayer, &localPlayer, sizeof(long));
 
-        g_remote[writeCount].iov_base =
-                ((uint8_t*) data_ptr + (sizeof(hack::GlowObjectDefinition_t) * i)) + bytesToCutOffBegin;
-        g_local[writeCount].iov_base = ((uint8_t*) &g_glow[i]) + bytesToCutOffBegin;
-        g_remote[writeCount].iov_len = g_local[writeCount].iov_len = totalWriteSize;
+	if (localPlayer != 0) {
+		csgo->Read((void*) (localPlayer+0x128), &teamNumber, sizeof(int));
+		NoFlash(csgo, client, localPlayer);
+	}
 
-        writeCount++;
-    }
+	for (unsigned int i = 0; i < count; i++) {
+		if (g_glow[i].m_pEntity != NULL) {
+			Entity ent;
 
-    process_vm_writev(csgo->GetPid(), g_local, writeCount, g_remote, writeCount, 0);
+			if (csgo->Read(g_glow[i].m_pEntity, &ent, sizeof(Entity))) {
+				if (ent.m_iTeamNum != 2 && ent.m_iTeamNum != 3) {
+					g_glow[i].m_bRenderWhenOccluded = 0;
+					g_glow[i].m_bRenderWhenUnoccluded = 0;
+					continue;
+				}
+
+				bool entityInCrossHair = false;
+
+				if (localPlayer != 0) {
+					if (ent.m_iTeamNum != teamNumber) {
+						unsigned int crossHairId = 0;
+						unsigned int entityId = 0;
+						unsigned int attack = 0x5;
+						unsigned int release = 0x4;
+						csgo->Read((void*) (localPlayer+0xB390), &crossHairId, sizeof(int));
+						csgo->Read((void*) (g_glow[i].m_pEntity + 0x94), &entityId, sizeof(int));
+
+						unsigned int iAlt1Status = 0 ;
+						csgo->Read((void*) (csgo->m_addressOfAlt1), &iAlt1Status, sizeof(int));
+
+						if (crossHairId == entityId) {
+							entityInCrossHair = true;
+
+							unsigned int shooting;
+							csgo->Read((void*) (csgo->m_addressOfForceAttack), &shooting, sizeof(int));
+
+							if (iAlt1Status == 0x5 && shooting != attack) {
+								usleep(100);
+								csgo->Write((void*) (csgo->m_addressOfForceAttack), &attack, sizeof(int));
+								usleep(100);
+								csgo->Write((void*) (csgo->m_addressOfForceAttack), &release, sizeof(int));
+							}
+						}
+					}
+				}
+
+				csgo->Write((void*) ((unsigned long) g_glow[i].m_pEntity + 0xEC5), &spotted, sizeof(unsigned char));
+
+				if (g_glow[i].m_bRenderWhenOccluded == 1)
+					continue;
+
+				g_glow[i].m_bRenderWhenOccluded = 1;
+				g_glow[i].m_bRenderWhenUnoccluded = 0;
+
+				if (ent.m_iTeamNum == 2 || ent.m_iTeamNum == 3) {
+					if (teamNumber == ent.m_iTeamNum) {
+						g_glow[i].m_flGlowRed = colors[8];
+						g_glow[i].m_flGlowGreen = colors[9];
+						g_glow[i].m_flGlowBlue = colors[10];
+						g_glow[i].m_flGlowAlpha = colors[11];
+					} else {
+						g_glow[i].m_flGlowRed = entityInCrossHair ? colors[4] : colors[0];
+						g_glow[i].m_flGlowGreen = entityInCrossHair ? colors[5] : colors[1];
+						g_glow[i].m_flGlowBlue = entityInCrossHair ? colors[6] : colors[2];
+						g_glow[i].m_flGlowAlpha = entityInCrossHair ? colors[7] : colors[3];
+					}
+				}
+			}
+		}
+
+		if (csgo->m_bShouldGlow) {
+			size_t bytesToCutOffEnd = sizeof(hack::GlowObjectDefinition_t) - g_glow[i].writeEnd();
+			size_t bytesToCutOffBegin = (size_t) g_glow[i].writeStart();
+			size_t totalWriteSize = (sizeof(hack::GlowObjectDefinition_t) - (bytesToCutOffBegin + bytesToCutOffEnd));
+
+			g_remote[writeCount].iov_base =
+				((uint8_t*) data_ptr + (sizeof(hack::GlowObjectDefinition_t) * i)) + bytesToCutOffBegin;
+			g_local[writeCount].iov_base = ((uint8_t*) &g_glow[i]) + bytesToCutOffBegin;
+			g_remote[writeCount].iov_len = g_local[writeCount].iov_len = totalWriteSize;
+
+			writeCount++;
+		}
+	}
+
+	process_vm_writev(csgo->GetPid(), g_local, writeCount, g_remote, writeCount, 0);
 }

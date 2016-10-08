@@ -1,33 +1,49 @@
 linux-csgo-external
 ===================
 
-Linux x86 cheat for x86 and x64 linux systems
+Linux cheat for x64 linux systems
 
-Compiled and tested on:
+Features:
+* *Wallhack*
+* *Trigger bot*
+* *Bhop*
+* *No Flash*
+
+## Wall hack
+![Walls png](http://i.imgur.com/ztp5WBf.jpg)
+
+## Bhop
+![Bhops gif](http://i.imgur.com/0DXp8bA.gif)
+
+## Toggles
+| Hack          | Key           |
+| ------------- |:-------------:|
+| ESP           | F7            |
+| No Flash      | F8            |
+| Bhop          | SPACE         |
+| Bhop lock     | F9            |
+
+
+## TriggerKey
+Bind your own key to alt1:
+bind yourkey +alt1
+
+### Compiling & Running the hack
+* The hack requires the Xlib libraries, install them on Debian based system with the command `sudo apt-get install libx11-dev libx11-dev:i386 libxtst-dev libconfig++-dev`
+* Make sure you're inside of the `linux-csgo-external` directory (`cd linux-csgo-external`)
+* Now, compile the hack by entering the command `make`
+* You can now run the hack ***before or after*** *csgo* is launched by running the hack as **root** `sudo ./csgo_external`
+
+## Tested Distributions
+- Ubuntu
 - Xubuntu
 - Archlinux
-- Debian (Jessie)
-
-![hackin](http://i.imgur.com/fiKLjnQ.jpg)
-
-Credits:
-- Original author: s0beit
-- Original author credits: BoToX & buFFy
-- Maintainer/Updater: laazyboy13 & community
-
-#Pull Request #4 - don't make an issue if this is your problem. I don't give a shit if you cant solve a dependency issue.
-
-# Create Toggle Keybind
-
-## Synopsis
-* Solves #2 
-    - (Kind of)
-    - No toggle for just radar.
-* Press a keybind to toggle the cheat.
-
-## Notes
-* Requires Xlib (both `libx11-dev:i386` and `libx11-dev`, `# apt-get install libx11-dev libx11-dev:i386` on Debian based systems
-* Bind in this Pull Request is Ctrl+Shift+X, but this is not optimal for gameplay.
+- Debian (Jessie + Sid)
 
 ## Known Bugs
-* Does not work with Numlock enabled.
+* Trigger doesn't work at far distance
+
+## Credits:
+- Original author: s0beit
+- Original author credits: BoToX & buFFy
+- Maintainer/Updater: laazyboy13, owerosu, McSwaggens & community
